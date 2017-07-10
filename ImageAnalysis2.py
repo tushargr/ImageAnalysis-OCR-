@@ -311,9 +311,11 @@ def checkotherpart(chars,j):
 mser = cv2.MSER_create()
 img = cv2.imread('A.jpg')
 grayimg = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#print(grayimg)
 cv2.imwrite('grayimg.jpg',grayimg)
 regions,_ = mser.detectRegions(grayimg)                  #height,width
 newimg=np.ndarray((grayimg.shape[0],grayimg.shape[1]),dtype=np.float32)
+#print(newimg)
 newimg[:,:]=0
 i=0
 
@@ -396,16 +398,23 @@ while(i>=0):
 
 cv2.imwrite('newimg2.jpg',newimg)
 words=[]
+#print(newimg)
 nimg = cv2.imread('newimg2.jpg',0)
 ret,thresh = cv2.threshold(nimg,127,255,0)
 _,contours,hierarchy = cv2.findContours(thresh, 1, 2)
-
+wordsp = ["" for x in range(30)]
+length = [0]*30
+length = [0 for i in xrange(30)]
+suma = [0]*30
+suma = [0 for i in xrange(30)]
+suma[0]=0
 for i in range(0,len(contours)):
     cnt = contours[i]
     words.append(cv2.boundingRect(cnt))
 words.sort(key=itemgetter(1)) #words[i]=x,y,w,h
 words=sortwords(words)
 jj=0
+gg=0
 for i in range(0,len(words)):
     x,y,w,h=words[i]
     wordimg=grayimg.copy()[y-1:y+h+2, x-1:x+w+2]
@@ -520,5 +529,12 @@ for i in range(0,len(words)):
 	#cv2.imwrite('c%d.jpg'%(jj),acharimg)
 	jj+=1
 	wrd=wrd+identifychar(acharimg)
-    print wrd	
-        
+    wordsp[gg]= wrd
+    gg = gg+1
+
+fo = open("foo.txt", "w")
+for i in range(gg):
+      print wordsp[i],
+      fo.write(wordsp[i]+" ")
+
+fo.close()
